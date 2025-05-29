@@ -60,7 +60,7 @@ export default function AddExpensePage() {
       description: data.description,
     };
     setExpenses(prevExpenses => [...prevExpenses, newExpense]);
-    toast({ title: "Expense Added", description: `"${data.description}" for ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data.amount)} added.` });
+    toast({ title: "Expense Added", description: `"${data.description}" for ${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(data.amount)} added.` });
     router.push('/expenses');
   };
 
@@ -135,7 +135,7 @@ export default function AddExpensePage() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount (USD)</FormLabel>
+                      <FormLabel>Amount (INR)</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.01" placeholder="0.00" {...field} />
                       </FormControl>

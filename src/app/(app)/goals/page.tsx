@@ -17,12 +17,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 
 const goalSchema = z.object({
-  amount: z.coerce.number().positive({ message: "Budget goal must be a positive number." }).min(1, { message: "Goal amount must be at least $1."}),
+  amount: z.coerce.number().positive({ message: "Budget goal must be a positive number." }).min(1, { message: "Goal amount must be at least ₹1."}),
 });
 type GoalFormData = z.infer<typeof goalSchema>;
 
 export default function GoalsPage() {
-  const [initialGoalObject] = React.useState<BudgetGoal>({ amount: 1000 }); // Default goal $1000
+  const [initialGoalObject] = React.useState<BudgetGoal>({ amount: 75000 }); // Default goal e.g. 75,000 INR
   const [initialExpensesArray] = React.useState<Expense[]>([]);
   const [goal, setGoal] = useLocalStorage<BudgetGoal>('budgetGoal', initialGoalObject);
   const [expenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
@@ -61,7 +61,7 @@ export default function GoalsPage() {
   React.useEffect(() => {
     // Update form default value if the goal changes from localStorage or initial state
     form.reset({ amount: goal.amount });
-  }, [goal, form]); // Removed isEditing dependency as it's not needed for resetting based on 'goal'
+  }, [goal, form]);
 
   const handleSetGoal: SubmitHandler<GoalFormData> = (data) => {
     setGoal({ amount: data.amount });
@@ -70,7 +70,7 @@ export default function GoalsPage() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   };
 
   return (
@@ -87,7 +87,7 @@ export default function GoalsPage() {
             <CardTitle>Your Monthly Budget Goal</CardTitle>
             {!isEditing && (
               <Button variant="outline" size="sm" onClick={() => {
-                form.reset({ amount: goal.amount }); // Ensure form has latest goal amount when starting edit
+                form.reset({ amount: goal.amount }); 
                 setIsEditing(true);
               }}>
                 <Edit3 className="mr-2 h-4 w-4" /> Edit Goal
@@ -107,11 +107,11 @@ export default function GoalsPage() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Monthly Budget Amount (USD)</FormLabel>
+                      <FormLabel>Monthly Budget Amount (INR)</FormLabel>
                       <div className="flex items-center gap-2">
-                        <DollarSign className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-xl font-semibold">₹</span>
                         <FormControl>
-                          <Input type="number" step="1" placeholder="e.g., 2000" {...field} className="max-w-xs"/>
+                          <Input type="number" step="1" placeholder="e.g., 150000" {...field} className="max-w-xs"/>
                         </FormControl>
                       </div>
                       <FormMessage />
@@ -144,7 +144,7 @@ export default function GoalsPage() {
         {!isEditing && goal.amount <=0 && (
             <CardFooter>
                 <p className="text-sm text-destructive">
-                    Set a budget goal greater than $0 to enable progress tracking.
+                    Set a budget goal greater than ₹0 to enable progress tracking.
                 </p>
             </CardFooter>
         )}

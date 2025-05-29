@@ -56,7 +56,7 @@ export default function EditExpensePage() {
   });
 
   React.useEffect(() => {
-    if (expenses.length > 0) { // Ensure expenses are loaded before trying to find one
+    if (expenses.length > 0) { 
       const expenseToEdit = expenses.find(exp => exp.id === expenseId);
       if (expenseToEdit) {
         form.reset({
@@ -70,8 +70,8 @@ export default function EditExpensePage() {
         router.replace('/expenses');
       }
       setIsLoading(false);
-    } else if (initialExpensesArray === expenses && !isLoading) { // Initial load, expenses still empty (e.g. from cleared storage)
-        setIsLoading(false); // Stop loading, allow "not found" message to show
+    } else if (initialExpensesArray === expenses && !isLoading) { 
+        setIsLoading(false); 
     }
   }, [expenseId, expenses, form, router, toast, initialExpensesArray, isLoading]);
 
@@ -123,7 +123,6 @@ export default function EditExpensePage() {
     return <div className="flex h-full items-center justify-center"><p>Loading expense details...</p></div>;
   }
 
-  // Check if form has a description after loading. If not, expense wasn't found or loaded.
   if (!form.getValues('description') && !expenses.find(exp => exp.id === expenseId)) { 
      return <div className="flex h-full flex-col items-center justify-center gap-4">
         <p>Expense not found or could not be loaded.</p>
@@ -174,7 +173,7 @@ export default function EditExpensePage() {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Amount (USD)</FormLabel>
+                      <FormLabel>Amount (INR)</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.01" placeholder="0.00" {...field} />
                       </FormControl>

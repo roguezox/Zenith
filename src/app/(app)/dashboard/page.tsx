@@ -28,7 +28,7 @@ export default function DashboardPage() {
   // Stabilize initial values for useLocalStorage
   const [initialExpensesArray] = React.useState<Expense[]>([]);
   const [initialCategoriesArray] = React.useState<Category[]>([]);
-  const [initialGoalObject] = React.useState<BudgetGoal>({ amount: 1000 });
+  const [initialGoalObject] = React.useState<BudgetGoal>({ amount: 75000 }); // Default goal e.g. 75,000 INR
 
   const [expenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
   const [categories] = useLocalStorage<Category[]>('categories', initialCategoriesArray);
@@ -86,7 +86,7 @@ export default function DashboardPage() {
   }, [expenses, categories, goal]);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
   };
   
   const getCategoryName = (categoryId: string) => {
@@ -146,7 +146,7 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4">
-          <SpendingBarChart data={barChartData} />
+          <SpendingBarChart data={barChartData} currency="INR" />
         </div>
         <div className="lg:col-span-3">
           <SpendingPieChart data={pieChartData} />

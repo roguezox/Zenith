@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
@@ -6,6 +7,7 @@ import { ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'; /
 
 interface SpendingBarChartProps {
   data: { name: string; total: number }[];
+  currency?: string; // Optional currency prop
 }
 
 const chartConfig = {
@@ -16,7 +18,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-export function SpendingBarChart({ data }: SpendingBarChartProps) {
+export function SpendingBarChart({ data, currency = 'USD' }: SpendingBarChartProps) {
   if (!data || data.length === 0) {
     return (
       <Card>
@@ -30,6 +32,9 @@ export function SpendingBarChart({ data }: SpendingBarChartProps) {
       </Card>
     );
   }
+
+  const currencySymbol = currency === 'INR' ? '₹' : '$';
+
   return (
     <Card>
       <CardHeader>
@@ -52,10 +57,10 @@ export function SpendingBarChart({ data }: SpendingBarChartProps) {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `${currencySymbol}${value}`}
             />
             <Tooltip
-              content={<ChartTooltipContent />}
+              content={<ChartTooltipContent formatter={(value: any) => `${currencySymbol}${Number(value).toLocaleString()}`} />}
               cursor={{ fill: "hsl(var(--muted))" }}
             />
             <Bar dataKey="total" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
