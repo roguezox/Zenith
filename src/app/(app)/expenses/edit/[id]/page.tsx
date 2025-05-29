@@ -50,7 +50,7 @@ export default function EditExpensePage() {
     defaultValues: {
       date: new Date(),
       categoryId: '',
-      amount: undefined,
+      amount: '' as unknown as number, // Initialize with empty string
       description: '',
     },
   });
@@ -123,7 +123,7 @@ export default function EditExpensePage() {
     return <div className="flex h-full items-center justify-center"><p>Loading expense details...</p></div>;
   }
 
-  if (!form.getValues('description') && !expenses.find(exp => exp.id === expenseId)) { 
+  if (!form.getValues('description') && !expenses.find(exp => exp.id === expenseId) && !isLoading) { 
      return <div className="flex h-full flex-col items-center justify-center gap-4">
         <p>Expense not found or could not be loaded.</p>
         <Button onClick={() => router.push('/expenses')}>Back to Expenses</Button>

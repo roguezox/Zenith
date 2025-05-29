@@ -46,7 +46,7 @@ export default function AddExpensePage() {
     defaultValues: {
       date: new Date(),
       categoryId: '',
-      amount: undefined,
+      amount: '' as unknown as number, // Initialize with empty string
       description: '',
     },
   });
