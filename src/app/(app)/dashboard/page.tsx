@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -24,9 +25,14 @@ const CHART_COLORS = [
 ];
 
 export default function DashboardPage() {
-  const [expenses] = useLocalStorage<Expense[]>('expenses', []);
-  const [categories] = useLocalStorage<Category[]>('categories', []);
-  const [goal] = useLocalStorage<BudgetGoal>('budgetGoal', { amount: 1000 }); // Default goal
+  // Stabilize initial values for useLocalStorage
+  const [initialExpensesArray] = React.useState<Expense[]>([]);
+  const [initialCategoriesArray] = React.useState<Category[]>([]);
+  const [initialGoalObject] = React.useState<BudgetGoal>({ amount: 1000 });
+
+  const [expenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
+  const [categories] = useLocalStorage<Category[]>('categories', initialCategoriesArray);
+  const [goal] = useLocalStorage<BudgetGoal>('budgetGoal', initialGoalObject); 
 
   const [currentMonthSpending, setCurrentMonthSpending] = React.useState(0);
   const [remainingBudget, setRemainingBudget] = React.useState(0);
@@ -73,7 +79,9 @@ export default function DashboardPage() {
     setPieChartData(formattedPieData);
 
     // Recent expenses
-    setRecentExpenses(expenses.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5));
+    // Create a new sorted array for recent expenses to avoid mutating the original 'expenses' array from localStorage state
+    const sortedExpensesForRecents = [...expenses].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    setRecentExpenses(sortedExpensesForRecents.slice(0, 5));
 
   }, [expenses, categories, goal]);
 
