@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -22,7 +23,8 @@ const categorySchema = z.object({
 type CategoryFormData = z.infer<typeof categorySchema>;
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useLocalStorage<Category[]>('categories', []);
+  const [initialCategoriesArray] = React.useState<Category[]>([]);
+  const [categories, setCategories] = useLocalStorage<Category[]>('categories', initialCategoriesArray);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [editingCategory, setEditingCategory] = React.useState<Category | null>(null);
   const { toast } = useToast();

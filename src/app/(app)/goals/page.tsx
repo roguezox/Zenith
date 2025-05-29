@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -21,8 +22,10 @@ const goalSchema = z.object({
 type GoalFormData = z.infer<typeof goalSchema>;
 
 export default function GoalsPage() {
-  const [goal, setGoal] = useLocalStorage<BudgetGoal>('budgetGoal', { amount: 1000 }); // Default goal $1000
-  const [expenses] = useLocalStorage<Expense[]>('expenses', []);
+  const [initialGoalObject] = React.useState<BudgetGoal>({ amount: 1000 }); // Default goal $1000
+  const [initialExpensesArray] = React.useState<Expense[]>([]);
+  const [goal, setGoal] = useLocalStorage<BudgetGoal>('budgetGoal', initialGoalObject);
+  const [expenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
   const [isEditing, setIsEditing] = React.useState(false);
   const { toast } = useToast();
 
@@ -56,8 +59,9 @@ export default function GoalsPage() {
   });
   
   React.useEffect(() => {
+    // Update form default value if the goal changes from localStorage or initial state
     form.reset({ amount: goal.amount });
-  }, [goal, form, isEditing]);
+  }, [goal, form]); // Removed isEditing dependency as it's not needed for resetting based on 'goal'
 
   const handleSetGoal: SubmitHandler<GoalFormData> = (data) => {
     setGoal({ amount: data.amount });
@@ -82,7 +86,10 @@ export default function GoalsPage() {
           <div className="flex justify-between items-center">
             <CardTitle>Your Monthly Budget Goal</CardTitle>
             {!isEditing && (
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+              <Button variant="outline" size="sm" onClick={() => {
+                form.reset({ amount: goal.amount }); // Ensure form has latest goal amount when starting edit
+                setIsEditing(true);
+              }}>
                 <Edit3 className="mr-2 h-4 w-4" /> Edit Goal
               </Button>
             )}

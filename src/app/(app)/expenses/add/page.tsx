@@ -1,8 +1,9 @@
+
 'use client';
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; // Added import
+import Link from 'next/link';
 import { DashboardHeader } from '@/components/dashboard-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +19,7 @@ import type { Expense, Category } from '@/types';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { smartCategorizeTransaction } from '@/ai/flows/categorize-transaction';
 import { useToast } from '@/hooks/use-toast';
@@ -33,8 +34,10 @@ type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 export default function AddExpensePage() {
   const router = useRouter();
-  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', []);
-  const [categories] = useLocalStorage<Category[]>('categories', []);
+  const [initialExpensesArray] = React.useState<Expense[]>([]);
+  const [initialCategoriesArray] = React.useState<Category[]>([]);
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
+  const [categories] = useLocalStorage<Category[]>('categories', initialCategoriesArray);
   const { toast } = useToast();
   const [isCategorizing, setIsCategorizing] = React.useState(false);
 
@@ -146,7 +149,7 @@ export default function AddExpensePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a category" />

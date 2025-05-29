@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -36,8 +37,10 @@ export default function EditExpensePage() {
   const params = useParams();
   const expenseId = params.id as string;
 
-  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', []);
-  const [categories] = useLocalStorage<Category[]>('categories', []);
+  const [initialExpensesArray] = React.useState<Expense[]>([]);
+  const [initialCategoriesArray] = React.useState<Category[]>([]);
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
+  const [categories] = useLocalStorage<Category[]>('categories', initialCategoriesArray);
   const { toast } = useToast();
   const [isCategorizing, setIsCategorizing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -53,20 +56,24 @@ export default function EditExpensePage() {
   });
 
   React.useEffect(() => {
-    const expenseToEdit = expenses.find(exp => exp.id === expenseId);
-    if (expenseToEdit) {
-      form.reset({
-        date: parseISO(expenseToEdit.date),
-        categoryId: expenseToEdit.categoryId,
-        amount: expenseToEdit.amount,
-        description: expenseToEdit.description,
-      });
-    } else if (expenses.length > 0) { // Only redirect if expenses have loaded and item not found
-      toast({ title: "Error", description: "Expense not found.", variant: "destructive"});
-      router.replace('/expenses');
+    if (expenses.length > 0) { // Ensure expenses are loaded before trying to find one
+      const expenseToEdit = expenses.find(exp => exp.id === expenseId);
+      if (expenseToEdit) {
+        form.reset({
+          date: parseISO(expenseToEdit.date),
+          categoryId: expenseToEdit.categoryId,
+          amount: expenseToEdit.amount,
+          description: expenseToEdit.description,
+        });
+      } else {
+        toast({ title: "Error", description: "Expense not found.", variant: "destructive"});
+        router.replace('/expenses');
+      }
+      setIsLoading(false);
+    } else if (initialExpensesArray === expenses && !isLoading) { // Initial load, expenses still empty (e.g. from cleared storage)
+        setIsLoading(false); // Stop loading, allow "not found" message to show
     }
-    setIsLoading(false);
-  }, [expenseId, expenses, form, router, toast]);
+  }, [expenseId, expenses, form, router, toast, initialExpensesArray, isLoading]);
 
   const handleUpdateExpense: SubmitHandler<ExpenseFormData> = (data) => {
     setExpenses(prevExpenses =>
@@ -116,8 +123,12 @@ export default function EditExpensePage() {
     return <div className="flex h-full items-center justify-center"><p>Loading expense details...</p></div>;
   }
 
-  if (!form.getValues('description') && !isLoading) { // Check if form has data after loading
-     return <div className="flex h-full items-center justify-center"><p>Expense not found or could not be loaded.</p></div>;
+  // Check if form has a description after loading. If not, expense wasn't found or loaded.
+  if (!form.getValues('description') && !expenses.find(exp => exp.id === expenseId)) { 
+     return <div className="flex h-full flex-col items-center justify-center gap-4">
+        <p>Expense not found or could not be loaded.</p>
+        <Button onClick={() => router.push('/expenses')}>Back to Expenses</Button>
+      </div>;
   }
 
 
@@ -261,4 +272,3 @@ export default function EditExpensePage() {
     </div>
   );
 }
-

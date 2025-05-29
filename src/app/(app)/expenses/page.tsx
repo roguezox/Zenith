@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -14,8 +15,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 export default function ExpensesPage() {
-  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', []);
-  const [categories] = useLocalStorage<Category[]>('categories', []);
+  const [initialExpensesArray] = React.useState<Expense[]>([]);
+  const [initialCategoriesArray] = React.useState<Category[]>([]);
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>('expenses', initialExpensesArray);
+  const [categories] = useLocalStorage<Category[]>('categories', initialCategoriesArray);
   const { toast } = useToast();
   const router = useRouter();
 
