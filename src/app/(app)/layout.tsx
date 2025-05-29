@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarInset,
+  useSidebar, // Added import
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
