@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarInset,
-  useSidebar, // Added import
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
@@ -22,12 +22,13 @@ import { navItems, bottomNavItems } from '@/config/nav-items';
 import type { NavItem } from '@/config/nav-items';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Moon, Sun, LogOut } from 'lucide-react'; // Assuming you might want theme toggle or logout later
+import { LogOut } from 'lucide-react'; // Assuming you might want theme toggle or logout later
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+// New internal component that uses useSidebar
+function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { state, toggleSidebar, isMobile, setOpenMobile } = useSidebar() ?? { state: 'expanded', toggleSidebar: () => {}, isMobile: false, setOpenMobile: () => {} };
-
+  // Now useSidebar is called within a component that will be a child of SidebarProvider
+  const { state, isMobile, setOpenMobile } = useSidebar();
 
   const renderNavItem = (item: NavItem, isCollapsed: boolean) => (
     <SidebarMenuItem key={item.href}>
@@ -45,7 +46,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <SidebarProvider defaultOpen>
+    <>
       <Sidebar collapsible="icon" side="left" variant="sidebar">
         <SidebarHeader className="items-center justify-between">
           <Logo collapsed={state === 'collapsed'} />
@@ -75,6 +76,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </SidebarInset>
+    </>
+  );
+}
+
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider defaultOpen>
+      <AppLayoutContent>{children}</AppLayoutContent>
     </SidebarProvider>
   );
 }
